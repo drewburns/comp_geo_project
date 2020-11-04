@@ -21,6 +21,7 @@ var shapeArray = [];
 function preload() {
   let url =
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
+  temp = loadJSON(url);
   for (const [key, value] of Object.entries(temp)) {
     shapeArray.concat(value);
   }
