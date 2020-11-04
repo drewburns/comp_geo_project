@@ -63,8 +63,8 @@ function callAPI() {
     console.log("http return: ", res);
     shapeArray = res;
     shapeArray = shapeArray.map((cords) => [
-      300 + (2 * (cords[0] + 100)),
-      300 + (2 * (cords[1] + 100)),
+      300 + (3 * (cords[0] + 75)),
+      100 + (3 * (cords[1] + 75)),
     ]);
     walls = [];
     walls.push(new Boundary(-1, -1, width, -1));
