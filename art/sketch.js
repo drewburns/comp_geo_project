@@ -9,28 +9,60 @@ let ray;
 let particle;
 let xoff = 0;
 let yoff = 10000;
-let shapeArray = [[-71, -11], [32, -49], [77, -53], [-40, 16], [-71, 11]];
-
+// var shapeArray = [
+//   [-71, -11],
+//   [32, -49],
+//   [77, -53],
+//   [-40, 16],
+//   [-71, 11],
+// ];
+var shapeArray = [
+  [-23, -50],
+  [67, -86],
+  [14, -31],
+  [6, 27],
+  [-23, -50],
+];
 
 function preload() {
-  let url = 'https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript'
-  //httpGet(url, 'json', false, function(res){
-    //shapeArray = res;
-  //});
+  let url =
+    "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
+  httpGet(url, "json", false, function (res) {
+    // shapeArray = res;
+  });
 }
 
 function setup() {
   createCanvas(400, 400);
-  // for(let i = 0; i < shapeArray.length-1; i++) {
-  //   walls[i] = new Boundary(shapeArray[i][0], shapeArray[i][1], shapeArray[i+1][0], shapeArray[i+1][1]);
-  // }
-  for (let i = 0; i < 5; i++) {
-    let x1 = random(width);
-    let x2 = random(width);
-    let y1 = random(height);
-    let y2 = random(height);
-    walls[i] = new Boundary(x1, y1, x2, y2);
+  shapeArray = shapeArray.map((cords) => [
+    2 * (cords[0] + 100),
+    2 * (cords[1] + 100),
+  ]);
+  console.log(shapeArray);
+  for (let i = 0; i < shapeArray.length - 1; i++) {
+    walls[i] = new Boundary(
+      shapeArray[i][0],
+      shapeArray[i][1],
+      shapeArray[i + 1][0],
+      shapeArray[i + 1][1]
+    );
   }
+  walls.push(
+    new Boundary(
+      shapeArray[shapeArray.length - 1][0],
+      shapeArray[shapeArray.length - 1][1],
+      shapeArray[0][0],
+      shapeArray[0][1]
+    )
+  );
+
+  // for (let i = 0; i < 5; i++) {
+  //   let x1 = random(width);
+  //   let x2 = random(width);
+  //   let y1 = random(height);
+  //   let y2 = random(height);
+  //   walls[i] = new Boundary(x1, y1, x2, y2);
+  // }
   walls.push(new Boundary(-1, -1, width, -1));
   walls.push(new Boundary(width, -1, width, height));
   walls.push(new Boundary(width, height, -1, height));
