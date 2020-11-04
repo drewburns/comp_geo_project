@@ -28,6 +28,7 @@ function preload() {
   let url =
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
   httpGet(url, "json", false, function (res) {
+    console.log(res);
     shapeArray = res;
   });
 }
@@ -38,7 +39,6 @@ function setup() {
     2 * (cords[0] + 100),
     2 * (cords[1] + 100),
   ]);
-  console.log(shapeArray);
   for (let i = 0; i < shapeArray.length - 1; i++) {
     walls[i] = new Boundary(
       shapeArray[i][0],
