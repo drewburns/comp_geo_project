@@ -30,7 +30,7 @@ function setup() {
   //   shapeArray.push(value);
   // }
 
-  createCanvas(400, 400);
+  createCanvas(600, 600);
 
   // for (let i = 0; i < 5; i++) {
   //   let x1 = random(width);
@@ -63,8 +63,8 @@ function callAPI() {
     console.log("http return: ", res);
     shapeArray = res;
     shapeArray = shapeArray.map((cords) => [
-      2 * (cords[0] + 100),
-      2 * (cords[1] + 100),
+      2 * (cords[0] + 300),
+      2 * (cords[1] + 300),
     ]);
     walls = [];
     walls.push(new Boundary(-1, -1, width, -1));
