@@ -9,51 +9,28 @@ let ray;
 let particle;
 let xoff = 0;
 let yoff = 10000;
-// var shapeArray = [
-//   [-71, -11],
-//   [32, -49],
-//   [77, -53],
-//   [-40, 16],
-//   [-71, 11],
-// ];
-var shapeArray = [];
+let input, button, greeting;
+var shapeArray = [
+  [-71, -11],
+  [32, -49],
+  [77, -53],
+  [-40, 16],
+  [-71, 11],
+];
+// var shapeArray = [];
 var rawData = null;
+let url =
+  "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
 function preload() {
-  let url =
-    "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript?sides=4";
-  rawData = loadJSON(url);
-  // httpGet(url, "json", false, function (res) {
-  //   console.log("http return: ", res);
-  //   shapeArray = res;
-  // });
+  // rawData = loadJSON(url+`?sides=${6}`);
 }
 
 function setup() {
-  for (const [key, value] of Object.entries(rawData)) {
-    shapeArray.push(value);
-  }
+  // for (const [key, value] of Object.entries(rawData)) {
+  //   shapeArray.push(value);
+  // }
 
   createCanvas(400, 400);
-  shapeArray = shapeArray.map((cords) => [
-    2 * (cords[0] + 100),
-    2 * (cords[1] + 100),
-  ]);
-  for (let i = 0; i < shapeArray.length - 1; i++) {
-    walls[i] = new Boundary(
-      shapeArray[i][0],
-      shapeArray[i][1],
-      shapeArray[i + 1][0],
-      shapeArray[i + 1][1]
-    );
-  }
-  walls.push(
-    new Boundary(
-      shapeArray[shapeArray.length - 1][0],
-      shapeArray[shapeArray.length - 1][1],
-      shapeArray[0][0],
-      shapeArray[0][1]
-    )
-  );
 
   // for (let i = 0; i < 5; i++) {
   //   let x1 = random(width);
@@ -62,10 +39,6 @@ function setup() {
   //   let y2 = random(height);
   //   walls[i] = new Boundary(x1, y1, x2, y2);
   // }
-  walls.push(new Boundary(-1, -1, width, -1));
-  walls.push(new Boundary(width, -1, width, height));
-  walls.push(new Boundary(width, height, -1, height));
-  walls.push(new Boundary(-1, height, -1, -1));
   particle = new Particle();
 
   input = createInput();
@@ -83,7 +56,39 @@ function setup() {
   textSize(50);
 }
 
-function callAPI() {}
+function callAPI() {
+  const sides = input.value();
+  console.log(sides);
+  httpGet(url+`?sides=${sides}`, "json", false, function (res) {
+    console.log("http return: ", res);
+    shapeArray = res;
+    shapeArray = shapeArray.map((cords) => [
+      2 * (cords[0] + 100),
+      2 * (cords[1] + 100),
+    ]);
+    walls = [];
+    walls.push(new Boundary(-1, -1, width, -1));
+    walls.push(new Boundary(width, -1, width, height));
+    walls.push(new Boundary(width, height, -1, height));
+    walls.push(new Boundary(-1, height, -1, -1));
+    for (let i = 0; i < shapeArray.length - 1; i++) {
+      walls[i] = new Boundary(
+        shapeArray[i][0],
+        shapeArray[i][1],
+        shapeArray[i + 1][0],
+        shapeArray[i + 1][1]
+      );
+    }
+    walls.push(
+      new Boundary(
+        shapeArray[shapeArray.length - 1][0],
+        shapeArray[shapeArray.length - 1][1],
+        shapeArray[0][0],
+        shapeArray[0][1]
+      )
+    );
+  });
+}
 
 function draw() {
   background(0);
