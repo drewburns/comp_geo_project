@@ -9,19 +9,19 @@ let ray;
 let particle;
 let xoff = 0;
 let yoff = 10000;
-// var shapeArray = [
-//   [-71, -11],
-//   [32, -49],
-//   [77, -53],
-//   [-40, 16],
-//   [-71, 11],
-// ];
-var shapeArray = [];
+var shapeArray = [
+  [-71, -11],
+  [32, -49],
+  [77, -53],
+  [-40, 16],
+  [-71, 11],
+];
+// var shapeArray = [];
 var rawData = null;
 function preload() {
   let url =
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
-  rawData = loadJSON(url);
+  // rawData = loadJSON(url);
   // httpGet(url, "json", false, function (res) {
   //   console.log("http return: ", res);
   //   shapeArray = res;
@@ -29,9 +29,9 @@ function preload() {
 }
 
 function setup() {
-  for (const [key, value] of Object.entries(rawData)) {
-    shapeArray.push(value);
-  }
+  // for (const [key, value] of Object.entries(rawData)) {
+  //   shapeArray.push(value);
+  // }
 
   createCanvas(400, 400);
   shapeArray = shapeArray.map((cords) => [
@@ -67,9 +67,30 @@ function setup() {
   walls.push(new Boundary(width, height, -1, height));
   walls.push(new Boundary(-1, height, -1, -1));
   particle = new Particle();
+
+
+  input = createInput();
+  input.position(20, 65);
+
+  button = createButton('submit');
+  button.position(input.x + input.width, 65);
+  button.mousePressed(callAPI);
+
+  greeting = createElement('h2', 'How many sides ya want?');
+  greeting.style('color', "white");
+  greeting.position(20, 5);
+
+  textAlign(CENTER);
+  textSize(50);
+  
+}
+
+function callAPI() {
+
 }
 
 function draw() {
+  
   background(0);
   for (let wall of walls) {
     wall.show();

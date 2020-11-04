@@ -4,7 +4,7 @@ from numpy import lexsort,asarray,append
 
 def lambda_handler(event, context):
     # TODO implement
-    n = 4
+    n = int(event["queryStringParameters"]['sides']) - 1
     fi = 0
     i = 1
     fi += 1
