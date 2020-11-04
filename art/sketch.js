@@ -23,8 +23,9 @@ function preload() {
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
   temp = loadJSON(url);
   for (const [key, value] of Object.entries(temp)) {
-    shapeArray.push(value)
+    shapeArray.push(value);
   }
+  console.log("shape array in preload: ", shapeArray);
   // httpGet(url, "json", false, function (res) {
   //   console.log("http return: ", res);
   //   shapeArray = res;
@@ -32,7 +33,7 @@ function preload() {
 }
 
 function setup() {
-  console.log(shapeArray);
+  console.log("here:", shapeArray);
   createCanvas(400, 400);
   shapeArray = shapeArray.map((cords) => [
     2 * (cords[0] + 100),
