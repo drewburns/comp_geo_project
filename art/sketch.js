@@ -21,10 +21,11 @@ var shapeArray = [];
 function preload() {
   let url =
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
-  httpGet(url, "json", false, function (res) {
-    console.log("http return: ", res);
-    shapeArray = res;
-  });
+    shapeArray = loadJSON(url)
+  // httpGet(url, "json", false, function (res) {
+  //   console.log("http return: ", res);
+  //   shapeArray = res;
+  // });
 }
 
 function setup() {
