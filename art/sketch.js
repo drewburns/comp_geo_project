@@ -28,7 +28,7 @@ function preload() {
   let url =
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
   httpGet(url, "json", false, function (res) {
-    // shapeArray = res;
+    shapeArray = res;
   });
 }
 
