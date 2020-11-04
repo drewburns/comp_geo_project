@@ -16,13 +16,7 @@ let yoff = 10000;
 //   [-40, 16],
 //   [-71, 11],
 // ];
-var shapeArray = [
-  [-23, -50],
-  [67, -86],
-  [14, -31],
-  [6, 27],
-  [-23, -50],
-];
+var shapeArray = [];
 
 function preload() {
   let url =
