@@ -17,11 +17,11 @@ let yoff = 10000;
 //   [-71, 11],
 // ];
 var shapeArray = [];
-
+var rawData = null;
 function preload() {
   let url =
     "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
-  temp = loadJSON(url);
+  rawData = loadJSON(url);
   // httpGet(url, "json", false, function (res) {
   //   console.log("http return: ", res);
   //   shapeArray = res;
@@ -32,7 +32,7 @@ function setup() {
   for (const [key, value] of Object.entries(temp)) {
     shapeArray.push(value);
   }
-  
+
   createCanvas(400, 400);
   shapeArray = shapeArray.map((cords) => [
     2 * (cords[0] + 100),
