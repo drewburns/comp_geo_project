@@ -29,7 +29,7 @@ function preload() {
 }
 
 function setup() {
-  for (const [key, value] of Object.entries(temp)) {
+  for (const [key, value] of Object.entries(rawData)) {
     shapeArray.push(value);
   }
 
