@@ -28,6 +28,7 @@ function preload() {
 }
 
 function setup() {
+  console.log(shapeArray);
   createCanvas(400, 400);
   shapeArray = shapeArray.map((cords) => [
     2 * (cords[0] + 100),
