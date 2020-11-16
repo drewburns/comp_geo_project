@@ -7,6 +7,7 @@
 let walls = [];
 let ray;
 let particle;
+let particleList = [];
 let xoff = 0;
 let yoff = 10000;
 let input, button, greeting;
@@ -59,13 +60,21 @@ function setup() {
 function callAPI() {
   const sides = input.value();
   console.log(sides);
-  httpGet(url+`?sides=${sides}`, "json", false, function (res) {
+  httpGet(url + `?sides=${sides}`, "json", false, function (res) {
     console.log("http return: ", res);
     shapeArray = res;
+
     shapeArray = shapeArray.map((cords) => [
-      300 + (3 * (cords[0] + 75)),
-      100 + (3 * (cords[1] + 75)),
+      300 + 3 * (cords[0] + 75),
+      100 + 3 * (cords[1] + 75),
     ]);
+
+    for (let i = 0; i < shapeArray.length; i++) {
+      p = new Particle();
+      p.update(shapeArray[i][0], shapeArray[i][1]);
+      particleList.push(p);
+    }
+
     walls = [];
     walls.push(new Boundary(-1, -1, width, -1));
     walls.push(new Boundary(width, -1, width, height));
@@ -98,7 +107,15 @@ function draw() {
   //particle.update(noise(xoff) * width, noise(yoff) * height);
   particle.update(mouseX, mouseY);
   particle.show();
-  particle.look(walls);
+  particle.look(walls, [0, 0, 255]);
+
+  particleList.forEach((p, index) => {
+    const red = index % 3 === 0 ? 255 : 0;
+    const blue = index % 3 === 1 ? 255 : 0;
+    const green = index % 3 === 2 ? 255 : 0;
+    p.show();
+    p.look(walls, [red, blue, green]);
+  });
 
   xoff += 0.01;
   yoff += 0.01;

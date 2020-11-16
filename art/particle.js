@@ -17,7 +17,7 @@ class Particle {
     this.pos.set(x, y);
   }
 
-  look(walls) {
+  look(walls, color) {
     for (let i = 0; i < this.rays.length; i++) {
       const ray = this.rays[i];
       let closest = null;
@@ -33,8 +33,8 @@ class Particle {
         }
       }
       if (closest) {
-        colorMode(HSB);
-        stroke((i) % 360, 255, 255, 50);
+        colorMode(RGB, 255);
+        stroke(color[0], color[1], color[2]);
         //stroke(255, 100);
         line(this.pos.x, this.pos.y, closest.x, closest.y);
       }
