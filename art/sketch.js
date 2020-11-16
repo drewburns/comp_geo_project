@@ -69,7 +69,8 @@ function callAPI() {
       100 + 3 * (cords[1] + 75),
     ]);
 
-    for (let i = 0; i < shapeArray.length; i++) {
+    particleList = [];
+    for (let i = 0; i < 3; i++) {
       p = new Particle();
       p.update(shapeArray[i][0], shapeArray[i][1]);
       particleList.push(p);
