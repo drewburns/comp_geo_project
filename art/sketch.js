@@ -11,12 +11,23 @@ let particleList = [];
 let xoff = 0;
 let yoff = 10000;
 let input, button, greeting;
+// var shapeArray = [
+//   [-71, -11],
+//   [32, -49],
+//   [77, -53],
+//   [-40, 16],
+//   [-71, 11],
+// ];
 var shapeArray = [
-  [-71, -11],
-  [32, -49],
-  [77, -53],
-  [-40, 16],
-  [-71, 11],
+  [-83, -9],
+  [-76, -65],
+  [-62, -37],
+  [-22, -67],
+  [-8, -70],
+  [82, 25],
+  [-16, 70],
+  [-43, 69],
+  [-83, -9],
 ];
 // var shapeArray = [];
 var rawData = null;
@@ -57,47 +68,78 @@ function setup() {
   textSize(50);
 }
 
+function getAngle(x,y){
+  var angle = Math.atan2(y, x);   //radians
+  // you need to devide by PI, and MULTIPLY by 180:
+  var degrees = 180*angle/Math.PI;  //degrees
+  return (360+Math.round(degrees))%360; //round number, avoid decimal fragments
+}
+// function find_angle(A, B, C) {
+//   var AB = Math.sqrt(Math.pow(B[0] - A[0], 2) + Math.pow(B[1] - A[1], 2));
+//   var BC = Math.sqrt(Math.pow(B[0] - C[0], 2) + Math.pow(B[1] - C[1], 2));
+//   var AC = Math.sqrt(Math.pow(C[0] - A[0], 2) + Math.pow(C[1] - A[1], 2));
+//   return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB));
+// }
+
 function callAPI() {
   const sides = input.value();
   console.log(sides);
-  httpGet(url + `?sides=${sides}`, "json", false, function (res) {
-    console.log("http return: ", res);
-    shapeArray = res;
+  // httpGet(url + `?sides=${sides}`, "json", false, function (res) {
+  // console.log("http return: ", res);
+  // shapeArray = res;
 
-    shapeArray = shapeArray.map((cords) => [
-      300 + 3 * (cords[0] + 75),
-      100 + 3 * (cords[1] + 75),
-    ]);
+  shapeArray = shapeArray.map((cords) => [
+    300 + 3 * (cords[0] + 75),
+    100 + 3 * (cords[1] + 75),
+  ]);
 
-    particleList = [];
-    for (let i = 0; i < 3; i++) {
-      p = new Particle();
-      p.update(shapeArray[i][0], shapeArray[i][1]);
-      particleList.push(p);
-    }
+  particleList = [];
+  // for (let i = 0; i < 2; i++) {
+  
+  point0 = shapeArray[0];
+  point1 = shapeArray[1];
+  point2 = shapeArray[2];
 
-    walls = [];
-    walls.push(new Boundary(-1, -1, width, -1));
-    walls.push(new Boundary(width, -1, width, height));
-    walls.push(new Boundary(width, height, -1, height));
-    walls.push(new Boundary(-1, height, -1, -1));
-    for (let i = 0; i < shapeArray.length - 1; i++) {
-      walls[i] = new Boundary(
-        shapeArray[i][0],
-        shapeArray[i][1],
-        shapeArray[i + 1][0],
-        shapeArray[i + 1][1]
-      );
-    }
-    walls.push(
-      new Boundary(
-        shapeArray[shapeArray.length - 1][0],
-        shapeArray[shapeArray.length - 1][1],
-        shapeArray[0][0],
-        shapeArray[0][1]
-      )
+  line1 = {x: point0[0] - point1[0], y: point0[1] - point1[0] }
+  line2 = {x: point2[0] - point1[0], y: point2[1] - point1[0] }
+  // const startAngle = getAngle(line1.x,line1.y)
+  // const stopAngle = getAngle(line2.x,line2.y)
+  let ref = createVector(1, 0);
+  let v1 = createVector(line1.x, line1.y);
+  let v2 = createVector(line2.x, line2.y);
+  const stopAngle = degrees(v2.angleBetween(ref));
+  const startAngle = degrees(ref.angleBetween(v1));
+
+
+  p = new Particle(startAngle, stopAngle);
+  // console.log("ANGLE: ", find_angle(point0, point1, point2));
+
+  p.update(shapeArray[1][0], shapeArray[1][1]);
+  particleList.push(p);
+  // }
+
+  walls = [];
+  walls.push(new Boundary(-1, -1, width, -1));
+  walls.push(new Boundary(width, -1, width, height));
+  walls.push(new Boundary(width, height, -1, height));
+  walls.push(new Boundary(-1, height, -1, -1));
+  for (let i = 0; i < shapeArray.length - 1; i++) {
+    walls[i] = new Boundary(
+      shapeArray[i][0],
+      shapeArray[i][1],
+      shapeArray[i + 1][0],
+      shapeArray[i + 1][1]
     );
-  });
+  }
+  walls.push(
+    new Boundary(
+      shapeArray[shapeArray.length - 1][0],
+      shapeArray[shapeArray.length - 1][1],
+      shapeArray[0][0],
+      shapeArray[0][1]
+    )
+  );
+  // });
 }
 
 function draw() {
