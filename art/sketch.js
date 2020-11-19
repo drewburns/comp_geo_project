@@ -86,8 +86,42 @@ function callAPI() {
 
 
     particleList = [];
-    for (let i = 0; i < 1; i++) {
-      p = new Particle();
+    for (let i = 0; i < 3; i++) {
+	let v1 = createVector(shapeArray[i][0],
+		shapeArray[i][1]);
+
+	let v2 = createVector(shapeArray[(i + 1) % shapeArray.length][0],
+		shapeArray[(i + 1) % shapeArray.length][1]);
+
+	let v3 = createVector(shapeArray[(i + shapeArray.length - 1) % shapeArray.length][0],
+		shapeArray[(i + shapeArray.length - 1) % shapeArray.length][1]);
+
+	let diff1 = p5.Vector.sub(v2, v1);
+	let diff2 = p5.Vector.sub(v3, v1);
+
+	ref = p5.Vector.fromAngle(radians(0));
+
+
+	let startAngle = degrees(ref.angleBetween(diff1));
+	let stopAngle = degrees(ref.angleBetween(diff2));
+
+	    //print((i + shapeArray.length - 1) % shapeArray.length)
+	    //print(i)
+	    //print((i + 1) % shapeArray.length)
+
+
+	    //if(startAngle < 0) {
+		    //startAngle = startAngle + 360*Math.ceil(Math.abs(startAngle)/360)
+	    //}
+
+	    if(stopAngle < startAngle) {
+		    stopAngle = stopAngle + 360*Math.ceil(Math.abs(stopAngle)/startAngle)
+	    }
+
+	    print(startAngle);
+	    print(stopAngle);
+
+      p = new Particle(startAngle, stopAngle);
       p.update(shapeArray[i][0], shapeArray[i][1]);
       particleList.push(p);
     }
@@ -145,28 +179,32 @@ function draw() {
 	//let v1 = createVector(300 + 3 * (shapeArray[0][0] + 75),
 		//100 + 3 * (shapeArray[0][1] + 75));
 
-	let v1 = createVector(shapeArray[0][0],
-		shapeArray[0][1]);
-
-	let v2 = createVector(shapeArray[1][0],
-		shapeArray[1][1]);
-
-	let v3 = createVector(shapeArray[4][0],
-		shapeArray[4][1]);
 
 	let a = createVector(height/2, width/2);
 
 	//drawArrow(zero, a, 'blue');
-	drawArrow(zero, ref, 'red');
+	//drawArrow(zero, ref, 'red');
 	//drawArrow(zero, v1, 'green');
 	//drawArrow(v1, v2, "green");
-	drawArrow(v2, v1, 'red');
+	//drawArrow(v2, v1, 'red');
 
-	drawArrow(zero, v2, "blue");
+	//drawArrow(zero, v2, "blue");
 
-	diff1 = createVector(v2.x - v1.x, v2.y - v1.x);
-	diff2 = createVector(v3.x - v1.x, v3.y - v1.x);
 
-	print(degrees(diff1.angleBetween(diff2)));
+	/*
+	let part = new Particle();
+	part.update(200, 200);
+	part.show();
+	part.look(walls, [0, 0, 255]);
+	*/
 
+
+
+	//print(degrees(ref.angleBetween(diff1)));
+	//print(degrees(diff1.angleBetween(diff2)));
+	//print(degrees(diff1.angleBetween(ref)));
+
+
+	//print(degrees(startAngle));
+	//print(degrees(stopAngle));
 }
