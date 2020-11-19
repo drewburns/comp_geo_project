@@ -99,7 +99,7 @@ function callAPI() {
     ]);
 
     particleList = [];
-    for (let i = 1; i < shapeArray.length - 1; i++) {
+    for (let i = 0; i < shapeArray.length - 1; i++) {
       let v1 = createVector(shapeArray[i][0], shapeArray[i][1]);
 
       let len = shapeArray.length - 1;
