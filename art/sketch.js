@@ -7,6 +7,7 @@
 let walls = [];
 let overlay = [];
 let showOverlay = false;
+let showGuardButtons = true;
 let ray;
 let particle;
 let particleList = [];
@@ -77,12 +78,31 @@ function setup() {
   button.position(input.x + input.width, height);
   button.mousePressed(toggleOverlay);
 
+  button = createButton("Toggle guard buttons");
+  button.position(input.x, height);
+  button.mousePressed(toggleGuardButtons);
+
   textAlign(CENTER);
   textSize(50);
   button = createButton("Turn guards OFF");
   button.position(input.x + input.width + 100, 65);
   button.mousePressed(toggleGuards);
 
+
+}
+
+function toggleGuardButtons() {
+	showGuardButtons = !showGuardButtons;
+	if(!showGuardButtons) {
+		for(let b of buttonList) {
+			b.hide();
+		}
+	}
+	if(showGuardButtons) {
+		for(let b of buttonList) {
+			b.show();
+		}
+	}
 }
 
 function toggleOverlay() {
