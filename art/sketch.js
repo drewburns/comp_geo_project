@@ -5,6 +5,8 @@
 // 2D Ray Casting
 
 let walls = [];
+let overlay = [];
+let showOverlay = false;
 let ray;
 let particle;
 let particleList = [];
@@ -60,7 +62,7 @@ function setup() {
   input = createInput();
   input.position(20, 65);
 
-  button = createButton("submit");
+  button = createButton("Submit");
   button.position(input.x + input.width, 65);
   button.mousePressed(callAPI);
 
@@ -71,11 +73,20 @@ function setup() {
   textAlign(CENTER);
   textSize(50);
 
+  button = createButton("Toggle triangulation overlay");
+  button.position(input.x + input.width, height);
+  button.mousePressed(toggleOverlay);
+
   textAlign(CENTER);
   textSize(50);
   button = createButton("Turn guards OFF");
   button.position(input.x + input.width + 100, 65);
   button.mousePressed(toggleGuards);
+
+}
+
+function toggleOverlay() {
+  showOverlay = !showOverlay;
 }
 
 function toggleGuards() {
@@ -215,34 +226,11 @@ function draw() {
   xoff += 0.01;
   yoff += 0.01;
 
-  let zero = createVector();
-  //let ref = createVector(300 + 3*(200 + 75),
-  //100 + 3 * (0 + 75));
-  let ref = createVector(50, 0);
-  //let v1 = createVector(300 + 3 * (shapeArray[0][0] + 75),
-  //100 + 3 * (shapeArray[0][1] + 75));
-
-  let a = createVector(height / 2, width / 2);
-
-  //drawArrow(zero, a, 'blue');
-  //drawArrow(zero, ref, 'red');
-  //drawArrow(zero, v1, 'green');
-  //drawArrow(v1, v2, "green");
-  //drawArrow(v2, v1, 'red');
-
-  //drawArrow(zero, v2, "blue");
-
-  /*
-	let part = new Particle();
-	part.update(200, 200);
-	part.show();
-	part.look(walls, [0, 0, 255]);
-	*/
-
-  //print(degrees(ref.angleBetween(diff1)));
-  //print(degrees(diff1.angleBetween(diff2)));
-  //print(degrees(diff1.angleBetween(ref)));
-
-  //print(degrees(startAngle));
-  //print(degrees(stopAngle));
+  if (showOverlay) {
+	  for (let pair of overlay) {
+		pairOne = pair[0];
+		pairTwo = pair[1];
+		line(pairOne[0], pairOne[1], pairTwo[0], pairTwo[1]);
+	  }
+  }
 }
