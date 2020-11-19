@@ -43,6 +43,30 @@ def isSafe(v, color, c, E):
 # Check safety of color assignment and recursively move onto next vertex
 
 
+def get_edges(pts_cc):
+    x = np.asarray([pts[0] for pts in pts_cc])
+    y = np.asarray([pts[1] for pts in pts_cc])
+    tri = our_tri(x, y, pts_cc)
+    edg = tri.edges
+    res = []
+
+    for i in range(0, len(pts_cc)):
+        e1 = edg[i][0]
+        e2 = edg[i][1]
+        p1 = []
+        p2 = []
+        p1.append(int(pts_cc[e1][0]))
+        p1.append(int(pts_cc[e1][1]))
+        p2.append(int(pts_cc[e2][0]))
+        p2.append(int(pts_cc[e2][1]))
+
+        r = []
+        r.append(p1)
+        r.append(p2)
+        res.append(r)
+    return res
+
+
 def threeColor(k, color, v, V, E):
     if v == len(V):
         return True
@@ -77,7 +101,6 @@ def graphColor(k, V, E):
     return result
 
 # Build coloring list and plot
-
 
 
 # Return guard positions from points array
@@ -235,7 +258,9 @@ def lambda_handler(event, context):
     tri = triang(coords)
     graph = graphColor(3, points, tri)
     guards = graph[0]
-    return_data = dict(points=coords.tolist(), guards=guards.tolist())
+    edges = get_edges(coords)
+    return_data = dict(points=coords.tolist(),
+                       guards=guards.tolist(), edges=edges)
 
     # runtime = time.time() - t0
     return {
