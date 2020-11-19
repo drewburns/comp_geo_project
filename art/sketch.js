@@ -19,7 +19,7 @@ var shapeArray = [
   [-40, 16],
   [-71, 11],
 ];
-// var shapeArray = [];
+var buttonArray = [];
 var rawData = null;
 let url =
   "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
@@ -88,6 +88,9 @@ function callAPI() {
   // console.log(sides);
   httpGet(url + `?sides=${sides}`, "json", false, function (res) {
     console.log("http return: ", res);
+    buttonList.forEach((button) => {
+      delete button;
+    });
     shapeArray = res;
 
     shapeArray = shapeArray.map((cords) => [
@@ -141,6 +144,7 @@ function callAPI() {
       button.mousePressed(() => {
         particleList[i].isShown = !particleList[i].isShown;
       });
+      buttonList.push(button);
     }
 
     walls = [];
