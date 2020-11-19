@@ -265,9 +265,9 @@ function draw() {
       stroke(255, 0, 0);
       line(
         300 + 3 * (pairOne[0] + 75),
-        300 + 3 * (pairOne[1] + 75),
+        100 + 3 * (pairOne[1] + 75),
         300 + 3 * (pairTwo[0] + 75),
-        300 + 3 * (pairTwo[1] + 75)
+        100 + 3 * (pairTwo[1] + 75)
       );
     }
   }
