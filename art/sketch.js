@@ -21,8 +21,8 @@ var shapeArray = [
 ];
 // var shapeArray = [];
 var rawData = null;
-//let url =
-//"https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
+let url =
+  "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
 function preload() {
   // rawData = loadJSON(url+`?sides=${6}`);
 }
