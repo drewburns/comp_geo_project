@@ -83,10 +83,6 @@ function toggleGuards() {
   button.html(`Turn guards ${showGuards ? "OFF" : "ON"}`);
 }
 
-shapeArray = shapeArray.map((cords) => [
-  300 + 3 * (cords[0] + 75),
-  100 + 3 * (cords[1] + 75),
-]);
 
 function callAPI() {
   const sides = input.value();
@@ -95,6 +91,11 @@ function callAPI() {
     console.log("http return: ", res);
     shapeArray = res;
 
+    shapeArray = shapeArray.map((cords) => [
+      300 + 3 * (cords[0] + 75),
+      100 + 3 * (cords[1] + 75),
+    ]);
+    
     particleList = [];
     for (let i = 0; i < 3; i++) {
       let v1 = createVector(shapeArray[i][0], shapeArray[i][1]);
