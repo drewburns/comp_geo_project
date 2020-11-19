@@ -80,7 +80,7 @@ function setup() {
   button.mousePressed(toggleOverlay);
 
   button = createButton("Toggle mouse guard");
-  button.position(input.x + input.width + input.width, height);
+  button.position(input.x + input.width*3, height);
   button.mousePressed(toggleMouseGuard);
 
   button = createButton("Toggle guard buttons");
