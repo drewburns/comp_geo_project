@@ -1,7 +1,6 @@
 import json
 import numpy as np
 import matplotlib.tri as mtri
-import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
 from numpy.random import randint
 
@@ -80,31 +79,6 @@ def graphColor(k, V, E):
 # Build coloring list and plot
 
 
-def paintPlot(g, pts_cc, col):
-    x = np.asarray([pts[0] for pts in pts_cc])
-    y = np.asarray([pts[1] for pts in pts_cc])
-    triang = our_tri(x, y, pts_cc)
-
-    fig, ax = plt.subplots()
-    '''
-  for i in range(0, len(x)):
-    if g[i] == 1:
-      col.append('r')
-    elif g[i] == 2:
-      col.append('g')
-    else:
-      col.append('b')
-  
-  for i in range(len(x)):
-    ax.scatter(x[i], y[i], c=col[i])
-  '''
-    xc = np.asarray([pts_c[0] for pts_c in g])
-    yc = np.asarray([pts_c[1] for pts_c in g])
-
-    ax.scatter(xc, yc, c='r')
-
-    ax.triplot(triang, color='k')
-    plt.show()
 
 # Return guard positions from points array
 
@@ -230,8 +204,7 @@ def our_tri(x, y, points):
 
 def lambda_handler(event, context):
     # TODO implement
-    # n = int(event["queryStringParameters"]['sides'])
-    n = 5
+    n = int(event["queryStringParameters"]['sides'])
     fi = 0
     i = 1
     fi += 1
@@ -271,4 +244,3 @@ def lambda_handler(event, context):
     }
 
 
-# lambda_handler(None, None)
