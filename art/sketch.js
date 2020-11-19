@@ -8,6 +8,7 @@ let walls = [];
 let overlay = [];
 let showOverlay = false;
 let showGuardButtons = true;
+let showMouseGuard = true;
 let ray;
 let particle;
 let particleList = [];
@@ -78,6 +79,10 @@ function setup() {
   button.position(input.x + input.width, height);
   button.mousePressed(toggleOverlay);
 
+  button = createButton("Toggle mouse guard");
+  button.position(input.x + input.width + input.width, height);
+  button.mousePressed(toggleMouseGuard);
+
   button = createButton("Toggle guard buttons");
   button.position(input.x, height);
   button.mousePressed(toggleGuardButtons);
@@ -89,6 +94,10 @@ function setup() {
   button.mousePressed(toggleGuards);
 
 
+}
+
+function toggleMouseGuard() {
+	showMouseGuard = !showMouseGuard;
 }
 
 function toggleGuardButtons() {
@@ -214,8 +223,10 @@ function draw() {
 
   //particle.update(noise(xoff) * width, noise(yoff) * height);
   particle.update(mouseX, mouseY);
-  particle.show();
-  particle.look(walls, [0, 0, 255]);
+  if(showMouseGuard) {
+	  particle.show();
+	  particle.look(walls, [0, 0, 255]);
+  }
 
   particleList.forEach((p, index) => {
     // const red = index % 3 === 0 ? 255 : 0;
