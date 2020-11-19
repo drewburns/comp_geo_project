@@ -11,6 +11,7 @@ let particleList = [];
 let xoff = 0;
 let yoff = 10000;
 let input, button, greeting;
+let showGuards = true;
 var shapeArray = [
   [-71, -11],
   [32, -49],
@@ -55,49 +56,60 @@ function setup() {
 
   textAlign(CENTER);
   textSize(50);
+
+  textAlign(CENTER);
+  textSize(50);
+  button = createButton("Turn guards OFF");
+  button.position(input.x + input.width + 100, 65);
+  button.mousePressed(toggleGuards);
+}
+
+function toggleGuards() {
+  showGuards = !showGuards;
+  button.html(`Turn guards ${showGuards ? "OFF" : "ON"}`);
 }
 
 function callAPI() {
   const sides = input.value();
   console.log(sides);
-  httpGet(url + `?sides=${sides}`, "json", false, function (res) {
-    console.log("http return: ", res);
-    shapeArray = res;
+  // httpGet(url + `?sides=${sides}`, "json", false, function (res) {
+  // console.log("http return: ", res);
+  // shapeArray = res;
 
-    shapeArray = shapeArray.map((cords) => [
-      300 + 3 * (cords[0] + 75),
-      100 + 3 * (cords[1] + 75),
-    ]);
+  shapeArray = shapeArray.map((cords) => [
+    300 + 3 * (cords[0] + 75),
+    100 + 3 * (cords[1] + 75),
+  ]);
 
-    particleList = [];
-    for (let i = 0; i < 3; i++) {
-      p = new Particle();
-      p.update(shapeArray[i][0], shapeArray[i][1]);
-      particleList.push(p);
-    }
+  particleList = [];
+  for (let i = 0; i < 3; i++) {
+    p = new Particle();
+    p.update(shapeArray[i][0], shapeArray[i][1]);
+    particleList.push(p);
+  }
 
-    walls = [];
-    walls.push(new Boundary(-1, -1, width, -1));
-    walls.push(new Boundary(width, -1, width, height));
-    walls.push(new Boundary(width, height, -1, height));
-    walls.push(new Boundary(-1, height, -1, -1));
-    for (let i = 0; i < shapeArray.length - 1; i++) {
-      walls[i] = new Boundary(
-        shapeArray[i][0],
-        shapeArray[i][1],
-        shapeArray[i + 1][0],
-        shapeArray[i + 1][1]
-      );
-    }
-    walls.push(
-      new Boundary(
-        shapeArray[shapeArray.length - 1][0],
-        shapeArray[shapeArray.length - 1][1],
-        shapeArray[0][0],
-        shapeArray[0][1]
-      )
+  walls = [];
+  walls.push(new Boundary(-1, -1, width, -1));
+  walls.push(new Boundary(width, -1, width, height));
+  walls.push(new Boundary(width, height, -1, height));
+  walls.push(new Boundary(-1, height, -1, -1));
+  for (let i = 0; i < shapeArray.length - 1; i++) {
+    walls[i] = new Boundary(
+      shapeArray[i][0],
+      shapeArray[i][1],
+      shapeArray[i + 1][0],
+      shapeArray[i + 1][1]
     );
-  });
+  }
+  walls.push(
+    new Boundary(
+      shapeArray[shapeArray.length - 1][0],
+      shapeArray[shapeArray.length - 1][1],
+      shapeArray[0][0],
+      shapeArray[0][1]
+    )
+  );
+  // });
 }
 
 function draw() {
@@ -105,17 +117,36 @@ function draw() {
   for (let wall of walls) {
     wall.show();
   }
+
   //particle.update(noise(xoff) * width, noise(yoff) * height);
   particle.update(mouseX, mouseY);
   particle.show();
   particle.look(walls, [0, 0, 255]);
 
   particleList.forEach((p, index) => {
-    const red = index % 3 === 0 ? 255 : 0;
-    const blue = index % 3 === 1 ? 255 : 0;
-    const green = index % 3 === 2 ? 255 : 0;
-    p.show();
-    p.look(walls, [red, blue, green]);
+    // const red = index % 3 === 0 ? 255 : 0;
+    // const blue = index % 3 === 1 ? 255 : 0;
+    // const green = index % 3 === 2 ? 255 : 0;
+    const color1 = [138,43,226];
+    const color2 = [0,191,255];
+    const color3 = [176,224,230];
+
+    var theColor = null;
+    if (index % 3 === 0) {
+      theColor = color1;
+    }
+    if (index % 3 === 1) {
+      theColor = color2;
+    }
+    if (index % 3 === 2) {
+      theColor = color3;
+    }
+
+    console.log(theColor)
+    if (showGuards) {
+      p.show();
+      p.look(walls, theColor);
+    }
   });
 
   xoff += 0.01;
