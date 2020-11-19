@@ -141,14 +141,14 @@ function callAPI() {
       // print(stopAngle);
 
       p = new Particle(startAngle, stopAngle);
-      button = createButton("X");
-      button.position(shapeArray[i][0], shapeArray[i][1]);
+      newButton = createButton("X");
+      newButton.position(shapeArray[i][0], shapeArray[i][1]);
       p.update(shapeArray[i][0], shapeArray[i][1]);
       particleList.push(p);
-      button.mousePressed(() => {
+      newButton.mousePressed(() => {
         particleList[i].isShown = !particleList[i].isShown;
       });
-      buttonList.push(button);
+      buttonList.push(newButton);
     }
 
     walls = [];
