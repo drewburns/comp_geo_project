@@ -99,18 +99,20 @@ function callAPI() {
     ]);
 
     particleList = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 1; i < shapeArray.length - 1; i++) {
       let v1 = createVector(shapeArray[i][0], shapeArray[i][1]);
 
-      let v2 = createVector(
-        shapeArray[(i + 1) % shapeArray.length][0],
-        shapeArray[(i + 1) % shapeArray.length][1]
-      );
+      let len = shapeArray.length - 1;
+      let p2 = (i + 1) % len;
+      let p3 = (i + len - 1) % len;
 
-      let v3 = createVector(
-        shapeArray[(i + shapeArray.length - 1) % shapeArray.length][0],
-        shapeArray[(i + shapeArray.length - 1) % shapeArray.length][1]
-      );
+      //print(p3);
+      //print(i);
+      //print(p2);
+
+      let v2 = createVector(shapeArray[p2][0], shapeArray[p2][1]);
+
+      let v3 = createVector(shapeArray[p3][0], shapeArray[p3][1]);
 
       let diff1 = p5.Vector.sub(v2, v1);
       let diff2 = p5.Vector.sub(v3, v1);
