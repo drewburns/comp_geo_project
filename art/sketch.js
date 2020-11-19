@@ -231,30 +231,31 @@ function draw() {
   }
 
   particleList.forEach((p, index) => {
-    if (guards)
+    if (guards) {
       // const red = index % 3 === 0 ? 255 : 0;
       // const blue = index % 3 === 1 ? 255 : 0;
       // const green = index % 3 === 2 ? 255 : 0;
       const color1 = [138, 43, 226];
-    const color2 = [0, 191, 255];
-    const color3 = [176, 224, 230];
+      const color2 = [0, 191, 255];
+      const color3 = [176, 224, 230];
 
-    var theColor = null;
-    if (index % 3 === 0) {
-      theColor = color1;
-    }
-    if (index % 3 === 1) {
-      theColor = color2;
-    }
-    if (index % 3 === 2) {
-      theColor = color3;
-    }
+      var theColor = null;
+      if (index % 3 === 0) {
+        theColor = color1;
+      }
+      if (index % 3 === 1) {
+        theColor = color2;
+      }
+      if (index % 3 === 2) {
+        theColor = color3;
+      }
 
-    // console.log(theColor);
-    if (showGuards) {
-      if (guards.filter((g) => arraysEqual(g, p.pos)).length != 0) {
-        p.show();
-        p.look(walls, theColor);
+      // console.log(theColor);
+      if (showGuards) {
+        if (guards.filter((g) => arraysEqual(g, p.pos)).length != 0) {
+          p.show();
+          p.look(walls, theColor);
+        }
       }
     }
   });
