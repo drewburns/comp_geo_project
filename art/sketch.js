@@ -83,19 +83,18 @@ function toggleGuards() {
   button.html(`Turn guards ${showGuards ? "OFF" : "ON"}`);
 }
 
-
 function callAPI() {
   const sides = input.value();
-  console.log(sides);
-  httpGet(url + `?sides=${sides}`, "json", false, function (res) {
-    console.log("http return: ", res);
-    shapeArray = res;
+  // console.log(sides);
+  // httpGet(url + `?sides=${sides}`, "json", false, function (res) {
+  //   console.log("http return: ", res);
+  //   shapeArray = res;
 
     shapeArray = shapeArray.map((cords) => [
       300 + 3 * (cords[0] + 75),
       100 + 3 * (cords[1] + 75),
     ]);
-    
+
     particleList = [];
     for (let i = 0; i < 3; i++) {
       let v1 = createVector(shapeArray[i][0], shapeArray[i][1]);
@@ -131,12 +130,17 @@ function callAPI() {
           stopAngle + 360 * Math.ceil(Math.abs(stopAngle) / startAngle);
       }
 
-      print(startAngle);
-      print(stopAngle);
+      // print(startAngle);
+      // print(stopAngle);
 
       p = new Particle(startAngle, stopAngle);
+      button = createButton("X");
+      button.position(shapeArray[i][0], shapeArray[i][1]);
       p.update(shapeArray[i][0], shapeArray[i][1]);
       particleList.push(p);
+      button.mousePressed(() => {
+        particleList[i].isShown = !particleList[i].isShown;
+      });
     }
 
     walls = [];
@@ -160,7 +164,7 @@ function callAPI() {
         shapeArray[0][1]
       )
     );
-  });
+  // });
 }
 
 function draw() {
@@ -193,7 +197,7 @@ function draw() {
       theColor = color3;
     }
 
-    console.log(theColor);
+    // console.log(theColor);
     if (showGuards) {
       p.show();
       p.look(walls, theColor);
