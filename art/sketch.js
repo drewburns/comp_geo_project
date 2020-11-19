@@ -86,9 +86,9 @@ function toggleGuards() {
 function callAPI() {
   const sides = input.value();
   // console.log(sides);
-  // httpGet(url + `?sides=${sides}`, "json", false, function (res) {
-  //   console.log("http return: ", res);
-  //   shapeArray = res;
+  httpGet(url + `?sides=${sides}`, "json", false, function (res) {
+    console.log("http return: ", res);
+    shapeArray = res;
 
     shapeArray = shapeArray.map((cords) => [
       300 + 3 * (cords[0] + 75),
@@ -164,7 +164,7 @@ function callAPI() {
         shapeArray[0][1]
       )
     );
-  // });
+  });
 }
 
 function draw() {
