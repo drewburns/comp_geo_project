@@ -14,17 +14,31 @@ let input, button, greeting;
 let showGuards = true;
 var shapeArray = [
   [-71, -11],
-  [32, -49],
+  [32, -79],
   [77, -53],
   [-40, 16],
   [-71, 11],
 ];
 // var shapeArray = [];
 var rawData = null;
-let url =
-  "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
+//let url =
+//"https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
 function preload() {
   // rawData = loadJSON(url+`?sides=${6}`);
+}
+
+function drawArrow(base, vec, myColor) {
+  push();
+  stroke(myColor);
+  strokeWeight(3);
+  fill(myColor);
+  translate(base.x, base.y);
+  line(0, 0, vec.x, vec.y);
+  rotate(vec.heading());
+  let arrowSize = 7;
+  translate(vec.mag() - arrowSize, 0);
+  triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+  pop();
 }
 
 function setup() {
@@ -69,47 +83,83 @@ function toggleGuards() {
   button.html(`Turn guards ${showGuards ? "OFF" : "ON"}`);
 }
 
+shapeArray = shapeArray.map((cords) => [
+  300 + 3 * (cords[0] + 75),
+  100 + 3 * (cords[1] + 75),
+]);
+
 function callAPI() {
   const sides = input.value();
   console.log(sides);
-  // httpGet(url + `?sides=${sides}`, "json", false, function (res) {
-  // console.log("http return: ", res);
-  // shapeArray = res;
+  httpGet(url + `?sides=${sides}`, "json", false, function (res) {
+    console.log("http return: ", res);
+    shapeArray = res;
 
-  shapeArray = shapeArray.map((cords) => [
-    300 + 3 * (cords[0] + 75),
-    100 + 3 * (cords[1] + 75),
-  ]);
+    particleList = [];
+    for (let i = 0; i < 3; i++) {
+      let v1 = createVector(shapeArray[i][0], shapeArray[i][1]);
 
-  particleList = [];
-  for (let i = 0; i < 3; i++) {
-    p = new Particle();
-    p.update(shapeArray[i][0], shapeArray[i][1]);
-    particleList.push(p);
-  }
+      let v2 = createVector(
+        shapeArray[(i + 1) % shapeArray.length][0],
+        shapeArray[(i + 1) % shapeArray.length][1]
+      );
 
-  walls = [];
-  walls.push(new Boundary(-1, -1, width, -1));
-  walls.push(new Boundary(width, -1, width, height));
-  walls.push(new Boundary(width, height, -1, height));
-  walls.push(new Boundary(-1, height, -1, -1));
-  for (let i = 0; i < shapeArray.length - 1; i++) {
-    walls[i] = new Boundary(
-      shapeArray[i][0],
-      shapeArray[i][1],
-      shapeArray[i + 1][0],
-      shapeArray[i + 1][1]
+      let v3 = createVector(
+        shapeArray[(i + shapeArray.length - 1) % shapeArray.length][0],
+        shapeArray[(i + shapeArray.length - 1) % shapeArray.length][1]
+      );
+
+      let diff1 = p5.Vector.sub(v2, v1);
+      let diff2 = p5.Vector.sub(v3, v1);
+
+      ref = p5.Vector.fromAngle(radians(0));
+
+      let startAngle = degrees(ref.angleBetween(diff1));
+      let stopAngle = degrees(ref.angleBetween(diff2));
+
+      //print((i + shapeArray.length - 1) % shapeArray.length)
+      //print(i)
+      //print((i + 1) % shapeArray.length)
+
+      //if(startAngle < 0) {
+      //startAngle = startAngle + 360*Math.ceil(Math.abs(startAngle)/360)
+      //}
+
+      if (stopAngle < startAngle) {
+        stopAngle =
+          stopAngle + 360 * Math.ceil(Math.abs(stopAngle) / startAngle);
+      }
+
+      print(startAngle);
+      print(stopAngle);
+
+      p = new Particle(startAngle, stopAngle);
+      p.update(shapeArray[i][0], shapeArray[i][1]);
+      particleList.push(p);
+    }
+
+    walls = [];
+    walls.push(new Boundary(-1, -1, width, -1));
+    walls.push(new Boundary(width, -1, width, height));
+    walls.push(new Boundary(width, height, -1, height));
+    walls.push(new Boundary(-1, height, -1, -1));
+    for (let i = 0; i < shapeArray.length - 1; i++) {
+      walls[i] = new Boundary(
+        shapeArray[i][0],
+        shapeArray[i][1],
+        shapeArray[i + 1][0],
+        shapeArray[i + 1][1]
+      );
+    }
+    walls.push(
+      new Boundary(
+        shapeArray[shapeArray.length - 1][0],
+        shapeArray[shapeArray.length - 1][1],
+        shapeArray[0][0],
+        shapeArray[0][1]
+      )
     );
-  }
-  walls.push(
-    new Boundary(
-      shapeArray[shapeArray.length - 1][0],
-      shapeArray[shapeArray.length - 1][1],
-      shapeArray[0][0],
-      shapeArray[0][1]
-    )
-  );
-  // });
+  });
 }
 
 function draw() {
@@ -127,9 +177,9 @@ function draw() {
     // const red = index % 3 === 0 ? 255 : 0;
     // const blue = index % 3 === 1 ? 255 : 0;
     // const green = index % 3 === 2 ? 255 : 0;
-    const color1 = [138,43,226];
-    const color2 = [0,191,255];
-    const color3 = [176,224,230];
+    const color1 = [138, 43, 226];
+    const color2 = [0, 191, 255];
+    const color3 = [176, 224, 230];
 
     var theColor = null;
     if (index % 3 === 0) {
@@ -142,7 +192,7 @@ function draw() {
       theColor = color3;
     }
 
-    console.log(theColor)
+    console.log(theColor);
     if (showGuards) {
       p.show();
       p.look(walls, theColor);
@@ -151,4 +201,35 @@ function draw() {
 
   xoff += 0.01;
   yoff += 0.01;
+
+  let zero = createVector();
+  //let ref = createVector(300 + 3*(200 + 75),
+  //100 + 3 * (0 + 75));
+  let ref = createVector(50, 0);
+  //let v1 = createVector(300 + 3 * (shapeArray[0][0] + 75),
+  //100 + 3 * (shapeArray[0][1] + 75));
+
+  let a = createVector(height / 2, width / 2);
+
+  //drawArrow(zero, a, 'blue');
+  //drawArrow(zero, ref, 'red');
+  //drawArrow(zero, v1, 'green');
+  //drawArrow(v1, v2, "green");
+  //drawArrow(v2, v1, 'red');
+
+  //drawArrow(zero, v2, "blue");
+
+  /*
+	let part = new Particle();
+	part.update(200, 200);
+	part.show();
+	part.look(walls, [0, 0, 255]);
+	*/
+
+  //print(degrees(ref.angleBetween(diff1)));
+  //print(degrees(diff1.angleBetween(diff2)));
+  //print(degrees(diff1.angleBetween(ref)));
+
+  //print(degrees(startAngle));
+  //print(degrees(stopAngle));
 }

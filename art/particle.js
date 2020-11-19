@@ -5,10 +5,10 @@
 // 2D Ray Casting
 
 class Particle {
-  constructor() {
+  constructor(startAngle = 0, stopAngle = 360) {
     this.pos = createVector(width / 2, height / 2);
     this.rays = [];
-    for (let a = 0; a < 360; a += 1) {
+    for (let a = startAngle; a < stopAngle; a += 1) {
       this.rays.push(new Ray(this.pos, radians(a)));
     }
   }
@@ -43,7 +43,7 @@ class Particle {
 
   show() {
     fill(255);
-    ellipse(this.pos.x, this.pos.y, 4);
+    ellipse(this.pos.x, this.pos.y, 30);
     for (let ray of this.rays) {
       ray.show();
     }
