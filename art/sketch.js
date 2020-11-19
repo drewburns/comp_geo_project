@@ -251,6 +251,9 @@ function draw() {
       }
 
       // console.log(theColor);
+      console.log("guards ", guards);
+      console.log("particle: ", p)
+      console.log(p.pos)
       if (showGuards) {
         if (guards.filter((g) => arraysEqual(g, p.pos)).length != 0) {
           p.show();
