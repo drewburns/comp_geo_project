@@ -131,7 +131,9 @@ function callAPI() {
     buttonList.forEach((button) => {
       button.remove();
     });
-    shapeArray = res;
+    shapeArray = res.points;
+    guards = res.guards;
+    overlay = res.edges;
 
     shapeArray = shapeArray.map((cords) => [
       300 + 3 * (cords[0] + 75),
