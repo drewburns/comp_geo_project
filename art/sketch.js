@@ -252,10 +252,17 @@ function draw() {
 
       // console.log(theColor);
       console.log("guards ", guards);
-      console.log("particle: ", p)
-      console.log(p.pos)
+      console.log("particle: ", p);
+      console.log([p.pos.x, p.pos.y]);
       if (showGuards) {
-        if (guards.filter((g) => arraysEqual(g, p.pos)).length != 0) {
+        if (
+          guards.filter((g) =>
+            arraysEqual(
+              [300 + 3 * (g[0] + 75), 300 + 3 * (g[1] + 75)],
+              [p.pos.x, p.pos.y]
+            )
+          ).length != 0
+        ) {
           p.show();
           p.look(walls, theColor);
         }
