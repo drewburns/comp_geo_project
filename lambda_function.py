@@ -1,7 +1,6 @@
 import json
 import numpy as np
 import matplotlib.tri as mtri
-from scipy.spatial import Delaunay
 from numpy.random import randint
 
 
