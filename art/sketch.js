@@ -64,7 +64,7 @@ function setup() {
   button.position(input.x + input.width, 65);
   button.mousePressed(callAPI);
 
-  greeting = createElement("h2", "How many sides ya want?");
+  greeting = createElement("h2", "Sides:");
   greeting.style("color", "white");
   greeting.position(20, 5);
 
