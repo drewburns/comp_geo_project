@@ -89,7 +89,7 @@ function callAPI() {
   httpGet(url + `?sides=${sides}`, "json", false, function (res) {
     console.log("http return: ", res);
     buttonList.forEach((button) => {
-      delete button;
+      button.remove();
     });
     shapeArray = res;
 
@@ -129,8 +129,10 @@ function callAPI() {
       //}
 
       if (stopAngle < startAngle) {
-        stopAngle =
-          stopAngle + 360 * Math.ceil(Math.abs(stopAngle) / startAngle);
+        if (startAngle != 0) {
+          stopAngle =
+            stopAngle + 360 * Math.ceil(Math.abs(stopAngle) / startAngle);
+        }
       }
 
       // print(startAngle);
