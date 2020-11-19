@@ -8,7 +8,7 @@ let walls = [];
 let overlay = [];
 let showOverlay = false;
 let showGuardButtons = true;
-let showMouseGuard = true;
+let showMouseGuard = false;
 let ray;
 let particle;
 let particleList = [];
