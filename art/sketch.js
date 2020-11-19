@@ -12,6 +12,7 @@ let showMouseGuard = false;
 let ray;
 let particle;
 let particleList = [];
+let guards = [];
 let xoff = 0;
 let yoff = 10000;
 let input, button, greeting;
@@ -184,6 +185,7 @@ function callAPI() {
       newButton = createButton("X");
       newButton.position(shapeArray[i][0], shapeArray[i][1]);
       p.update(shapeArray[i][0], shapeArray[i][1]);
+
       particleList.push(p);
       newButton.mousePressed(() => {
         particleList[i].isShown = !particleList[i].isShown;
@@ -229,10 +231,11 @@ function draw() {
   }
 
   particleList.forEach((p, index) => {
-    // const red = index % 3 === 0 ? 255 : 0;
-    // const blue = index % 3 === 1 ? 255 : 0;
-    // const green = index % 3 === 2 ? 255 : 0;
-    const color1 = [138, 43, 226];
+    if (guards)
+      // const red = index % 3 === 0 ? 255 : 0;
+      // const blue = index % 3 === 1 ? 255 : 0;
+      // const green = index % 3 === 2 ? 255 : 0;
+      const color1 = [138, 43, 226];
     const color2 = [0, 191, 255];
     const color3 = [176, 224, 230];
 
@@ -249,8 +252,10 @@ function draw() {
 
     // console.log(theColor);
     if (showGuards) {
-      p.show();
-      p.look(walls, theColor);
+      if (guards.filter((g) => arraysEqual(g, p.pos)).length != 0) {
+        p.show();
+        p.look(walls, theColor);
+      }
     }
   });
 
@@ -262,6 +267,8 @@ function draw() {
       pairOne = pair[0];
       pairTwo = pair[1];
       colorMode(RGB, 255);
+      push();
+      strokeWeight(4);
       stroke(255, 0, 0);
       line(
         300 + 3 * (pairOne[0] + 75),
@@ -269,6 +276,23 @@ function draw() {
         300 + 3 * (pairTwo[0] + 75),
         100 + 3 * (pairTwo[1] + 75)
       );
+      pop();
     }
   }
+}
+
+function arraysEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+
+  // If you don't care about the order of the elements inside
+  // the array, you should sort both arrays here.
+  // Please note that calling sort on an array will modify that array.
+  // you might want to clone your array first.
+
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
 }
