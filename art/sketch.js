@@ -19,7 +19,7 @@ var shapeArray = [
   [-40, 16],
   [-71, 11],
 ];
-var buttonArray = [];
+var buttonList = [];
 var rawData = null;
 let url =
   "https://02jg1blwka.execute-api.us-east-1.amazonaws.com/default/geoScript";
