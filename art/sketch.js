@@ -76,15 +76,15 @@ function setup() {
   textSize(50);
 
   button = createButton("Toggle triangulation overlay");
-  button.position(input.x + input.width, height);
+  button.position(input.x + input.width, height - 50);
   button.mousePressed(toggleOverlay);
 
   button = createButton("Toggle mouse guard");
-  button.position(input.x + input.width*3, height);
+  button.position(input.x + input.width * 3, height - 50);
   button.mousePressed(toggleMouseGuard);
 
   button = createButton("Toggle guard buttons");
-  button.position(input.x, height);
+  button.position(input.x, height - 50);
   button.mousePressed(toggleGuardButtons);
 
   textAlign(CENTER);
@@ -92,26 +92,24 @@ function setup() {
   button = createButton("Turn guards OFF");
   button.position(input.x + input.width + 100, 65);
   button.mousePressed(toggleGuards);
-
-
 }
 
 function toggleMouseGuard() {
-	showMouseGuard = !showMouseGuard;
+  showMouseGuard = !showMouseGuard;
 }
 
 function toggleGuardButtons() {
-	showGuardButtons = !showGuardButtons;
-	if(!showGuardButtons) {
-		for(let b of buttonList) {
-			b.hide();
-		}
-	}
-	if(showGuardButtons) {
-		for(let b of buttonList) {
-			b.show();
-		}
-	}
+  showGuardButtons = !showGuardButtons;
+  if (!showGuardButtons) {
+    for (let b of buttonList) {
+      b.hide();
+    }
+  }
+  if (showGuardButtons) {
+    for (let b of buttonList) {
+      b.show();
+    }
+  }
 }
 
 function toggleOverlay() {
@@ -225,9 +223,9 @@ function draw() {
 
   //particle.update(noise(xoff) * width, noise(yoff) * height);
   particle.update(mouseX, mouseY);
-  if(showMouseGuard) {
-	  particle.show();
-	  particle.look(walls, [0, 0, 255]);
+  if (showMouseGuard) {
+    particle.show();
+    particle.look(walls, [0, 0, 255]);
   }
 
   particleList.forEach((p, index) => {
@@ -260,10 +258,17 @@ function draw() {
   yoff += 0.01;
 
   if (showOverlay) {
-	  for (let pair of overlay) {
-		pairOne = pair[0];
-		pairTwo = pair[1];
-		line(pairOne[0], pairOne[1], pairTwo[0], pairTwo[1]);
-	  }
+    for (let pair of overlay) {
+      pairOne = pair[0];
+      pairTwo = pair[1];
+      colorMode(RGB, 255);
+      stroke(255, 0, 0);
+      line(
+        300 + 3 * (pairOne[0] + 75),
+        300 + 3 * (pairOne[1] + 75),
+        300 + 3 * (pairTwo[0] + 75),
+        300 + 3 * (pairTwo[1] + 75)
+      );
+    }
   }
 }
