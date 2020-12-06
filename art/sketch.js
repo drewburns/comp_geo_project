@@ -17,6 +17,7 @@ let xoff = 0;
 let yoff = 10000;
 let input, button, greeting;
 let showGuards = true;
+let shapeStorage = [];
 var shapeArray = [
   [-71, -11],
   [32, -79],
@@ -126,7 +127,7 @@ function callAPI() {
   const sides = input.value();
   // console.log(sides);
   httpGet(url + `?sides=${sides}`, "json", false, function (res) {
-    console.log("http return: ", res);
+    //console.log("http return: ", res);
     buttonList.forEach((button) => {
       button.remove();
     });
@@ -251,9 +252,9 @@ function draw() {
       }
 
       // console.log(theColor);
-      console.log("guards2 ", guards);
-      console.log("particle2: ", p);
-      console.log([p.pos.x, p.pos.y]);
+      //console.log("guards2 ", guards);
+      //console.log("particle2: ", p);
+      //console.log([p.pos.x, p.pos.y]);
       if (showGuards) {
         if (
           guards.filter((g) =>
