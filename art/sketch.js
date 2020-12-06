@@ -65,6 +65,11 @@ function setup() {
   input = createInput();
   input.position(20, 65);
 
+  about = createA( "about.html", "About this project", "" )
+  about.style("color", "#fff")
+  about.position(0,0);
+
+
   button = createButton("Submit");
   button.position(input.x + input.width, 65);
   button.mousePressed(callAPI);
