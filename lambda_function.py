@@ -148,10 +148,10 @@ def get_edges(pts_cc):
         p1 = []
         p2 = []
         r = []
-        p1.append(pts_cc[e1][0])
-        p1.append(pts_cc[e1][1])
-        p2.append(pts_cc[e2][0])
-        p2.append(pts_cc[e2][1])
+        p1.append(int(pts_cc[e1][0]))
+        p1.append(int(pts_cc[e1][1]))
+        p2.append(int(pts_cc[e2][0]))
+        p2.append(int(pts_cc[e2][1]))
         r.append(p1)
         r.append(p2)
         res.append(r)
@@ -253,7 +253,8 @@ def coloring(n, m, e):
 
 def lambda_handler(event, context):
     # TODO implement
-    n = int(event["queryStringParameters"]['sides'])
+    # n = int(event["queryStringParameters"]['sides'])
+    n = 6
     fi = 0
     i = 1
     fi += 1
@@ -296,3 +297,6 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps(return_data)
     }
+
+
+lambda_handler(None,None)
