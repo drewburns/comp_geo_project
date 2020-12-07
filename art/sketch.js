@@ -106,7 +106,7 @@ function setup() {
   textAlign(CENTER);
   textSize(50);
   button = createButton("Turn guards OFF");
-  button.position(input.x + input.width + 100, 65);
+  button.position(input.x + input.width + 115, 65);
   button.mousePressed(toggleGuards);
 }
 
