@@ -1,128 +1,12 @@
 import json
 import numpy as np
 import matplotlib.tri as mtri
+import time
 from numpy.random import randint
+from scipy.spatial import Delaunay
+from collections import deque
 
-
-# Reference: https://www.geeksforgeeks.org/m-coloring-problem-backtracking-5/
-
-# Split the array, triangulate, and extract all edges
-def triang(pts_cc):
-    # Points creation
-    x = np.asarray([pts[0] for pts in pts_cc])
-    y = np.asarray([pts[1] for pts in pts_cc])
-
-    # Modified Delauney Triangulation
-    # *#triang = mtri.Triangulation(x, y)
-    triang = our_tri(x, y, pts_cc)
-
-    # Edge Creation Overhead
-    edges = []
-    tedges = triang.edges
-    for i in range(len(tedges)):
-        e1 = tedges[i][0]
-        e2 = tedges[i][1]
-        edges.append([e1, e2])
-        edges.append([e2, e1])
-    sort_edges = sorted(edges)
-    return sort_edges
-
-# Determine if vertex color is identical to neighbor
-
-
-def isSafe(v, color, c, E):
-    sort_edges = E
-    for i in range(len(sort_edges)):
-        if sort_edges[i][0] == v:
-            j = sort_edges[i][1]
-            if color[j] == c:
-                return False
-    return True
-
-# Check safety of color assignment and recursively move onto next vertex
-
-
-def get_edges(pts_cc):
-    x = np.asarray([pts[0] for pts in pts_cc])
-    y = np.asarray([pts[1] for pts in pts_cc])
-    tri = our_tri(x, y, pts_cc)
-    edg = tri.edges
-    res = []
-
-    for i in range(0, len(pts_cc)):
-        e1 = edg[i][0]
-        e2 = edg[i][1]
-        p1 = []
-        p2 = []
-        p1.append(int(pts_cc[e1][0]))
-        p1.append(int(pts_cc[e1][1]))
-        p2.append(int(pts_cc[e2][0]))
-        p2.append(int(pts_cc[e2][1]))
-
-        r = []
-        r.append(p1)
-        r.append(p2)
-        res.append(r)
-    return res
-
-
-def threeColor(k, color, v, V, E):
-    if v == len(V):
-        return True
-
-    for c in range(1, k + 1):
-        if isSafe(v, color, c, E) == True:
-            color[v] = c
-            if threeColor(k, color, v + 1, V, E) == True:
-                return True
-            color[v] = 0
-
-# Runs k-coloring algorithm and returns set of guard positions and their colors
-
-
-def graphColor(k, V, E):
-    color = [0]*len(V)
-    if threeColor(k, color, 0, V, E) == None:
-        return False
-    print("Solution Exists")
-
-    # Find the minimum guard positions
-    guards = []
-
-    m = min(set(color), key=color.count)
-    for i in range(0, len(color)):
-        if color[i] == m:
-            guards.append(V[i])
-    guards1 = np.array(guards)
-    color1 = np.array(color)
-    result = (guards1, color1)
-
-    return result
-
-# Build coloring list and plot
-
-
-# Return guard positions from points array
-
-
-def guards_pos(pts_cc, color):
-    ls = []
-    col = []
-    for i in range(0, len(pts_cc)):
-        x = []
-        x.append(pts_cc[i][0])
-        x.append(pts_cc[i][1])
-        ls.append(x)
-        col.append(color[i])
-
-    min_color = min(set(col), key=col.count)
-
-    for i in range(0, len(pts_cc)):
-        if col[i] == min_color:
-            ls[i].append("g")
-
-    return ls
-
+###============TRIANGULATION================###
 
 #simplices = list(tri.simplices.copy())
 
@@ -223,6 +107,149 @@ def our_tri(x, y, points):
     tri = mtri.Triangulation(x, y, simplices)
     return tri
 
+# Triangulate and Return Corrected Edges
+
+
+def triang(pts_cc):
+    x = np.asarray([pts[0] for pts in pts_cc])
+    y = np.asarray([pts[1] for pts in pts_cc])
+
+    # Modified Delauney Triangulation
+    triang = our_tri(x, y, pts_cc)
+
+    # Edge Correction
+    edges = []
+    tedges = triang.edges
+    for i in range(len(tedges)):
+        e1 = tedges[i][0]
+        e2 = tedges[i][1]
+        edges.append([e1, e2])
+        edges.append([e2, e1])
+    sort_edges = sorted(edges)
+    return sort_edges
+
+# Return Edges in Point Form
+
+
+def get_edges(pts_cc):
+    x = np.asarray([pts[0] for pts in pts_cc])
+    y = np.asarray([pts[1] for pts in pts_cc])
+    tri = our_tri(x, y, pts_cc)
+    edg = tri.edges
+    res = []
+    pts_len = len(pts_cc)
+
+    if len(tri.edges) == 3:
+        pts_len -= 1
+
+    for i in range(0, pts_len):
+        e1 = edg[i][0]
+        e2 = edg[i][1]
+        p1 = []
+        p2 = []
+        r = []
+        p1.append(pts_cc[e1][0])
+        p1.append(pts_cc[e1][1])
+        p2.append(pts_cc[e2][0])
+        p2.append(pts_cc[e2][1])
+        r.append(p1)
+        r.append(p2)
+        res.append(r)
+    return res
+
+# NEW - Return guard positions from points array
+
+
+def guards_pos(pts_cc, color):
+    guards = []
+    m = min(set(color), key=color.count)
+
+    for i in range(0, len(color)):
+        if color[i] == m:
+            guards.append(pts_cc[i])
+
+    guards1 = np.array(guards)
+    return guards1
+
+###============BFS-COLORING================###
+# Reference - https://www.geeksforgeeks.org/m-coloring-problem-backtracking-5/
+
+# Node structure
+
+
+class node:
+    def __init__(self, id):
+        self.id = id
+        self.color = 1
+        self.edges = []
+
+# Return if graph can be m-colored
+
+
+def canPaint(nodes, n, m):
+    visited = [0]*n
+    maxColors = 1
+
+    for sv in range(0, n):
+        if visited[sv] == 1:
+            continue
+
+        visited[sv] = 1
+        q = deque([])
+        q.append(sv)
+
+        # BFS Travel starts here
+        while len(q) != 0:
+            top = q[0]
+            q.popleft()
+
+            # Checking all adjacent nodes to "top" edge in our queue
+            for i in range(0, len(nodes[top].edges)):
+                # IMPORTANT: If the color of the adjacent node is same, increase it by 1
+                e = nodes[top].edges[i]
+                if nodes[top].color == nodes[e].color:
+                    nodes[e].color += 1
+
+                # If number of colors used shoots m, return 0
+                maxColors = max(maxColors, max(
+                    nodes[top].color, nodes[e].color))
+                if maxColors > m:
+                    return 0
+
+                # If the adjacent node is not visited, mark it visited and push it in queue
+                if visited[e] == 0:
+                    visited[e] = 1
+                    q.append(e)
+        return 1
+
+# Return coloring list
+
+
+def coloring(n, m, e):
+    nodes = []
+    for i in range(0, n):
+        nodes.append(node(i))
+
+    for i in range(0, len(e)):
+        s = e[i][0]
+        d = e[i][1]
+        nodes[s].edges.append(d)
+
+    # Run BFS
+    c = canPaint(nodes, n, m)
+
+    # Report succes/failure and return color list
+    if c:
+        print("Solution Exists in 3-Color")
+    else:
+        print("No Solution Exists in 3-Color")
+
+    color = []
+    for i in range(0, n):
+        color.append(nodes[i].color)
+
+    return color
+
 
 def lambda_handler(event, context):
     # TODO implement
@@ -253,15 +280,18 @@ def lambda_handler(event, context):
 
     # General Returns ##
     points = coords
+
     # t0 = time.time()
-    tri = triang(coords)
-    graph = graphColor(3, points, tri)
-    guards = graph[0]
-    edges = get_edges(coords)
+    # t0 = time.time()
+    tri = triang(points)
+    g = coloring(len(points)-1, 3, tri)
+
+    # runtime = time.time() - t0
+    guards = guards_pos(points, g)
+    edges = get_edges(points)
     return_data = dict(points=coords.tolist(),
                        guards=guards.tolist(), edges=edges)
 
-    # runtime = time.time() - t0
     return {
         'statusCode': 200,
         'body': json.dumps(return_data)
