@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.tri as mtri
 import time
 from numpy.random import randint
-from scipy.spatial import Delaunay
+# from scipy.spatial import Delaunay
 from collections import deque
 from numpy import lexsort,asarray,append
 
@@ -373,4 +373,3 @@ def lambda_handler(event, context):
     }
 
 
-# lambda_handler(None,None)
