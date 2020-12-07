@@ -5,34 +5,36 @@ import time
 from numpy.random import randint
 from scipy.spatial import Delaunay
 from collections import deque
+from numpy import lexsort,asarray,append
 
 ###============TRIANGULATION================###
 
 #simplices = list(tri.simplices.copy())
 
 
-def our_tri(x, y, points):
-
-    tri2 = mtri.Triangulation(x, y)
+def our_tri(x,y, points):
+    tri2 = mtri.Triangulation(x,y)
     simplices = tri2.triangles
 
-    def isleft(a, b, c):
+    def isleft(a,b,c):
         det = ((b[0]-a[0])*(c[1] - a[1]) - (b[1] - a[1])*(c[0] - a[0]))
         c = [b[0], b[1]+1]
         det_test = ((b[0]-a[0])*(c[1] - a[1]) - (b[1] - a[1])*(c[0] - a[0]))
+        
+        return  det*det_test > 0
 
-        return det*det_test > 0
 
     # Need to find angle from a given vertex to its two neighbors
-    n = len(points) - 1
+    n = len(points) -1
     angles = np.zeros(n)
     for i in range(n):
         # use point[i] as vertex
         # a = vector of line from point[i] to point[i+1]
         # b = vector of line from point[i] to point[i-1]
-        a = points[(i+1) % n] - points[i]
-        b = points[(i-1) % n] - points[i]
-        # print(a,b)
+        a = points[(i+1)%n] - points[i] 
+        b = points[(i-1)%n] - points[i]
+        #print(a,b)
+        
 
         # calculate angle using |a||b|cos(angle) = a.b (two dimensions)
         dot = np.dot(a, b)
@@ -47,64 +49,141 @@ def our_tri(x, y, points):
         if b[0] > 0 and b[1] > 0:
             # is point a above line made by b?
             # if yes, then use 2pi - angle
-            if isleft(b, [0, 0], a):
+            if isleft(b, [0,0], a):
                 angle = 2*np.pi - angle
 
         # b is right and below i
         if b[0] > 0 and b[1] < 0:
             # is point a above line bi?
             # if yes, then use 2pi - angle
-            if isleft(b, [0, 0], a):
+            if isleft(b, [0,0], a):
                 angle = 2*np.pi - angle
-
+        
         # b is left and above i
         if b[0] < 0 and b[1] > 0:
             # is point a above line bi?
             # if no, then use 2pi - angle
-            if not isleft(b, [0, 0], a):
+            if not isleft(b, [0,0], a):
                 angle = 2*np.pi - angle
 
         # b is left and below i
         if b[0] < 0 and b[1] < 0:
             # is point a above line bi?
             # if no, then use 2pi - angle
-            if not isleft(b, [0, 0], a):
+            if not isleft(b, [0,0], a):
                 angle = 2*np.pi - angle
-
+        
         angles[i] = angle
     '''    
     for ang in angles:
         print(ang)
     '''
 
-    # print()
+    #print()
     # Now need to compare with angles using triangles
     for i in range(n):
         for tri in simplices:
             if i in tri:
                 for j in tri:
-                    if j % n != i and j % n != (i-1) % n:
+                    if j%n != i and j%n != (i-1)%n:
                         a = points[j] - points[i]
-                        b = points[(i-1) % n] - points[i]
+                        b = points[(i-1)%n] - points[i]
                         #print(a, b)
 
-                        # calculate angle using
-                        # |a||b|cos(angle) = a.b (two dimensions)
+                        # calculate angle using |a||b|cos(angle) = a.b (two dimensions)
                         dot = np.dot(a, b)
                         mag_a = np.linalg.norm(a)
                         mag_b = np.linalg.norm(b)
                         val = dot/(mag_a*mag_b)
                         angle = np.arccos(val)
 
+                        # Need to check where inside angle is
+                        # Points go counterclockwise
+                        # b is right and above i
+                        if b[0] > 0 and b[1] > 0:
+                            # is point a above line made by b?
+                            # if yes, then use 2pi - angle
+                            if isleft(b, [0,0], a):
+                                angle = 2*np.pi - angle
+
+                        # b is right and below i
+                        if b[0] > 0 and b[1] < 0:
+                            # is point a above line bi?
+                            # if yes, then use 2pi - angle
+                            if isleft(b, [0,0], a):
+                                angle = 2*np.pi - angle
+                        
+                        # b is left and above i
+                        if b[0] < 0 and b[1] > 0:
+                            # is point a above line bi?
+                            # if no, then use 2pi - angle
+                            if not isleft(b, [0,0], a):
+                                angle = 2*np.pi - angle
+
+                        # b is left and below i
+                        if b[0] < 0 and b[1] < 0:
+                            # is point a above line bi?
+                            # if no, then use 2pi - angle
+                            if not isleft(b, [0,0], a):
+                                angle = 2*np.pi - angle
+                
                         # if the angle of a triangle is larger
                         # than the angle of the vertex, then it
                         # is outside the shape.
                         if angle > angles[i]:
-                            # print(tri)
-                            simplices = [
-                                x for x in simplices if not (x == tri).all()]
+                            #print(tri)
+                            simplices = [x for x in simplices if not (x == tri).all()]
 
-    tri = mtri.Triangulation(x, y, simplices)
+    # Need to check if there are any edges without a triangle
+    edges = []
+    for i in range(n):
+        edge = False
+        for tri in simplices:
+            if (i in tri) and ((i+1)%n in tri):
+                edge = True
+        if edge:
+            edges.append(i)
+    #print("edges:\n",edges)
+    
+    for i in range(n):
+        z = 0
+        while not (i in edges):
+            if z > 30:
+                break
+            hold = True
+            for tri in simplices:
+                if (i+1)%n in tri:
+                    hold = False
+            if hold:
+                tri = [i,(i+1)%n, (i+2)%n]
+                #print("hold",tri)
+                simplices.append(tri)
+                edges.append(i)
+                edges.append((i+1)%n)
+            else:
+                trisi = []
+                trisi1 = []
+                for tri in simplices:
+                    if i in tri:
+                        trisi.append(tri)
+                    if (i+1)%n in tri:
+                        trisi1.append(tri)
+
+                for tri in trisi:
+                    for j in tri:
+                        if (j != i) and (j != (i+1)%n):
+                            for tri1 in trisi1:
+                                if j in tri1:
+                                    newtri = [i, (i+1)%n, j]
+                                    #print("newtri:", newtri)
+                                    simplices.append(newtri)
+                                    edges.append(i)
+            z+=1
+    
+    
+                
+                            
+    tri = mtri.Triangulation(x,y, simplices)
     return tri
 
 # Triangulate and Return Corrected Edges
@@ -137,12 +216,8 @@ def get_edges(pts_cc):
     tri = our_tri(x, y, pts_cc)
     edg = tri.edges
     res = []
-    pts_len = len(pts_cc)
 
-    if len(tri.edges) == 3:
-        pts_len -= 1
-
-    for i in range(0, pts_len):
+    for i in range(0, len(edg)):
         e1 = edg[i][0]
         e2 = edg[i][1]
         p1 = []
