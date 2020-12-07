@@ -253,8 +253,7 @@ def coloring(n, m, e):
 
 def lambda_handler(event, context):
     # TODO implement
-    # n = int(event["queryStringParameters"]['sides'])
-    n = 6
+    n = int(event["queryStringParameters"]['sides'])
     fi = 0
     i = 1
     fi += 1
