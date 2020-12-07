@@ -17,7 +17,8 @@ let xoff = 0;
 let yoff = 10000;
 let input, button, greeting;
 let showGuards = true;
-let shapeStorage = [];
+let stateCache = [];
+let stateIndex = -1;
 var shapeArray = [
   [-71, -11],
   [32, -79],
@@ -94,11 +95,36 @@ function setup() {
   button.position(input.x, height - 50);
   button.mousePressed(toggleGuardButtons);
 
+  button = createButton("Next");
+  button.position(input.x + 50, height - 80);
+  button.mousePressed(setLastState);
+
+  button = createButton("Previous");
+  button.position(input.x, height - 80);
+  button.mousePressed(setNextState);
+
   textAlign(CENTER);
   textSize(50);
   button = createButton("Turn guards OFF");
   button.position(input.x + input.width + 100, 65);
   button.mousePressed(toggleGuards);
+}
+
+function setLastState() {
+	if(stateIndex <= 0) {
+		return;
+	}
+
+	stateIndex--;
+	setState(stateIndex);
+}
+
+function setNextState() {
+	if(stateIndex >= stateCache.length-1) {
+		return;
+	}
+	stateIndex++;
+	setState(stateIndex);
 }
 
 function toggleMouseGuard() {
@@ -128,8 +154,105 @@ function toggleGuards() {
   button.html(`Turn guards ${showGuards ? "OFF" : "ON"}`);
 }
 
+function setState(index) {
+    if(index > stateCache.length-1) {
+	    callAPI();
+	    return;
+    }
+
+    if(index < 0) {
+	    return;
+    }
+
+    let state = stateCache[index];
+    shapeArray = state.shapeArray;
+    guards = state.guards;
+    overlay = state.overlay;
+
+    shapeArray = shapeArray.map((cords) => [
+      300 + 3 * (cords[0] + 75),
+      100 + 3 * (cords[1] + 75),
+    ]);
+
+    particleList = [];
+    for (let i = 0; i < shapeArray.length - 1; i++) {
+      let v1 = createVector(shapeArray[i][0], shapeArray[i][1]);
+
+      let len = shapeArray.length - 1;
+      let p2 = (i + 1) % len;
+      let p3 = (i + len - 1) % len;
+
+
+      let v2 = createVector(shapeArray[p2][0], shapeArray[p2][1]);
+
+      let v3 = createVector(shapeArray[p3][0], shapeArray[p3][1]);
+
+      let diff1 = p5.Vector.sub(v2, v1);
+      let diff2 = p5.Vector.sub(v3, v1);
+
+      ref = p5.Vector.fromAngle(radians(0));
+
+      let startAngle = degrees(ref.angleBetween(diff1));
+      let stopAngle = degrees(ref.angleBetween(diff2));
+
+      //print((i + shapeArray.length - 1) % shapeArray.length)
+      //print(i)
+      //print((i + 1) % shapeArray.length)
+
+      //if(startAngle < 0) {
+      //startAngle = startAngle + 360*Math.ceil(Math.abs(startAngle)/360)
+      //}
+
+      if (stopAngle < startAngle) {
+        if (startAngle != 0) {
+          stopAngle =
+            stopAngle + 360 * Math.ceil(Math.abs(stopAngle) / startAngle);
+        }
+      }
+
+      // print(startAngle);
+      // print(stopAngle);
+
+      p = new Particle(startAngle, stopAngle);
+      newButton = createButton("X");
+      newButton.position(shapeArray[i][0], shapeArray[i][1]);
+      p.update(shapeArray[i][0], shapeArray[i][1]);
+
+      particleList.push(p);
+      newButton.mousePressed(() => {
+        particleList[i].isShown = !particleList[i].isShown;
+      });
+      buttonList.push(newButton);
+    }
+
+    walls = [];
+    walls.push(new Boundary(-1, -1, width, -1));
+    walls.push(new Boundary(width, -1, width, height));
+    walls.push(new Boundary(width, height, -1, height));
+    walls.push(new Boundary(-1, height, -1, -1));
+    for (let i = 0; i < shapeArray.length - 1; i++) {
+      walls[i] = new Boundary(
+        shapeArray[i][0],
+        shapeArray[i][1],
+        shapeArray[i + 1][0],
+        shapeArray[i + 1][1]
+      );
+    }
+    walls.push(
+      new Boundary(
+        shapeArray[shapeArray.length - 1][0],
+        shapeArray[shapeArray.length - 1][1],
+        shapeArray[0][0],
+        shapeArray[0][1]
+      )
+    );
+
+}
+
 function callAPI() {
+
   const sides = input.value();
+
   // console.log(sides);
   httpGet(url + `?sides=${sides}`, "json", false, function (res) {
     //console.log("http return: ", res);
@@ -139,6 +262,14 @@ function callAPI() {
     shapeArray = res.points;
     guards = res.guards;
     overlay = res.edges;
+    
+    newCacheItem = {};
+    newCacheItem.shapeArray = shapeArray;
+    newCacheItem.guards = guards;
+    newCacheItem.overlay = overlay;
+    stateCache.push(newCacheItem);
+
+    stateIndex++;
 
     shapeArray = shapeArray.map((cords) => [
       300 + 3 * (cords[0] + 75),
