@@ -95,13 +95,13 @@ function setup() {
   button.position(input.x, height - 50);
   button.mousePressed(toggleGuardButtons);
 
-  button = createButton("Next");
-  button.position(input.x + input.width, height - 90);
-  button.mousePressed(setLastState);
+  //button = createButton("Next");
+  //button.position(input.x + input.width, height - 90);
+  //button.mousePressed(setLastState);
 
-  button = createButton("Previous");
-  button.position(input.x, height - 90);
-  button.mousePressed(setNextState);
+  //button = createButton("Previous");
+  //button.position(input.x, height - 90);
+  //button.mousePressed(setNextState);
 
   textAlign(CENTER);
   textSize(50);
